@@ -93,7 +93,7 @@ jobs:
       - build
     services:
       my-app:
-        image: ${{ env.CONTAINER_COMMIT_IMAGE }}
+        image: ghcr.io/${{ github.repository }}:${{ github.sha }}
         credentials:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
