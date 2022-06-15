@@ -10,9 +10,9 @@ on:
       - main
 
 env:
-  CONTAINER_REGISTRY: ghcr.io/tailzip/github-actions-dojo
-  CONTAINER_COMMIT_IMAGE: ghcr.io/tailzip/github-actions-dojo:${{ github.sha }}
-  CONTAINER_LATEST_IMAGE: ghcr.io/tailzip/github-actions-dojo:latest
+  CONTAINER_REGISTRY: ghcr.io/augustin-ardon/github-actions-dojo
+  CONTAINER_COMMIT_IMAGE: ghcr.io/augustin-ardon/github-actions-dojo:${{ github.sha }}
+  CONTAINER_LATEST_IMAGE: ghcr.io/augustin-ardon/github-actions-dojo:latest
 
 jobs:
   lint-all:
@@ -70,15 +70,19 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Login to Github Docker Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+  
       - name: Build and push Docker image
         run: |
-          echo $PAT | docker login ghcr.io -u tailzip --password-stdin
-
           docker build --build-arg APP_VERSION="$APP_VERSION" -t $CONTAINER_COMMIT_IMAGE  -t $CONTAINER_LATEST_IMAGE .
           docker push $CONTAINER_COMMIT_IMAGE
           docker push $CONTAINER_LATEST_IMAGE
         env:
-          PAT: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           APP_VERSION: ${{ github.sha }}
 
   integ-tests:
@@ -89,10 +93,10 @@ jobs:
       - build
     services:
       my-app:
-        image: ghcr.io/tailzip/github-actions-dojo:${{ github.sha }}
+        image: ghcr.io/augustin-ardon/github-actions-dojo:${{ github.sha }}
         credentials:
-          username: tailzip
-          password: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
         ports:
           - 8000:8000
     steps:
