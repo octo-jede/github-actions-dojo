@@ -7,8 +7,8 @@ on:
       - 'v*.*.*'
 
 env:
-  CONTAINER_REGISTRY: ghcr.io/tailzip/github-actions-dojo
-  CONTAINER_COMMIT_IMAGE: ghcr.io/tailzip/github-actions-dojo:${{ github.sha }}
+  CONTAINER_REGISTRY: ghcr.io/augustin-ardon/github-actions-dojo
+  CONTAINER_COMMIT_IMAGE: ghcr.io/augustin-ardon/github-actions-dojo:${{ github.sha }}
 
 jobs:
   release:
@@ -20,17 +20,18 @@ jobs:
       - name: Get tag name
         id: tagName
         run: echo "::set-output name=tag::${GITHUB_REF#refs/*/}"
-
-      # - uses: olegtarasov/get-tag@v2.1
-      #   id: tagName
+      
+      - name: Login to Github Docker Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Release Docker image
         run: |
-          echo $PAT | docker login ghcr.io -u tailzip --password-stdin
-
           docker pull "$CONTAINER_COMMIT_IMAGE"
           docker tag "$CONTAINER_COMMIT_IMAGE" "$CONTAINER_REGISTRY:$TAG"
           docker push "$CONTAINER_REGISTRY:$TAG"
         env:
-          PAT: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           TAG: ${{ steps.tagName.outputs.tag }}
