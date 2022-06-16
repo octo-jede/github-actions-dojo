@@ -13,7 +13,7 @@ jobs:
   
   Static Code Analysis Tests:
     runs-on: ubuntu-latest
-    need:
+    needs:
       - Lint
     steps:
       - run: echo "example"
@@ -21,7 +21,7 @@ jobs:
 
   Unit Tests:
     runs-on: ubuntu-latest
-    need:
+    needs:
       - Static Code Analysis Tests
     steps:
       - run: echo "example"
@@ -29,7 +29,7 @@ jobs:
 
   Build:
     runs-on: ubuntu-latest
-    need:
+    needs:
       - Unit Tests
     steps:
       - run: echo "example"
@@ -37,7 +37,7 @@ jobs:
 
   Integ Tests:
     runs-on: ubuntu-latest
-    need:
+    needs:
       - Build
     steps:
       - run: echo "example"
