@@ -10,6 +10,12 @@ jobs:
     steps:
       - run: echo "example"
       - run: echo "does it work ?"
+    uses: github/super-linter@v4
+    env:
+      VALIDATE_ALL_CODEBASE: false
+      DEFAULT_BRANCH: dojo
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   
   Static Code Analysis Tests:
     runs-on: ubuntu-latest
