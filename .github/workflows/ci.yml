@@ -22,8 +22,11 @@ jobs:
     needs:
       - Lint
     steps:
-      - run: echo "example"
-      - run: echo "does it work ?"
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      - run: |
+            pip install -r requirements.txt
 
   UnitTests:
     runs-on: ubuntu-latest
